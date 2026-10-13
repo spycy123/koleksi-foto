@@ -1,28 +1,164 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D wave animation</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f0e7">
+  <meta name="description" content="Koleksi Foto — jurnal visual dan arsip momen pribadi.">
+  <title>Koleksi Foto — Visual Journal</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/gallery.js" defer></script>
 </head>
 <body>
-    <div class="wrapper">
-         <div class="items">
-            <div class="item" tabindex="0" style="background-image: url(image/1.jpg);"></div>
-            <div class="item" tabindex="0" style="background-image: url(image/2.jpg);"></div>
-            <div class="item" tabindex="0" style="background-image: url(image/3.jpg);"></div>
-            <div class="item" tabindex="0" style="background-image: url(image/4.jpg);"></div>
-            <div class="item" tabindex="0" style="background-image: url(image/5.jpg);"></div>
-            <div class="item" tabindex="0" style="background-image: url(image/6.jpg);"></div>
-            <div class="item" tabindex="0" style="background-image: url(image/7.jpg);"></div>
-            <div class="item" tabindex="0" style="background-image: url(image/8.jpg);"></div>
-            <div class="item" tabindex="0" style="background-image: url(image/9.jpg);"></div>
-            <div class="item" tabindex="0" style="background-image: url(image/10.jpg);"></div>
-            <div class="item" tabindex="0" style="background-image: url(image/11.jpg);"></div>
-            <div class="item" tabindex="0" style="background-image: url(image/12.jpg);"></div>
-            <div class="item" tabindex="0" style="background-image: url(image/13.jpg);"></div>
-         </div>
-    </div>
+  <header class="masthead">
+    <a href="#" class="wordmark" aria-label="Koleksi Foto, beranda">
+      koleksi<span>foto</span><sup>®</sup>
+    </a>
+
+    <nav class="top-nav" aria-label="Navigasi utama">
+      <a href="#archive">Arsip</a>
+      <a href="#about">Tentang</a>
+    </nav>
+
+    <span class="issue-label">PERSONAL VISUAL JOURNAL · NO. 001</span>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div class="intro-copy">
+        <p class="overline">CATATAN VISUAL / 2026</p>
+        <h1 id="page-title">Hal-hal kecil,<br>yang layak <em>diingat.</em></h1>
+        <p class="intro-description">
+          Sebuah ruang kecil untuk menyimpan gambar,
+          mengumpulkan momen, dan melihat kembali hal-hal
+          yang pernah menarik perhatian.
+        </p>
+      </div>
+
+      <div class="intro-aside">
+        <span class="aside-index">FIG. 01</span>
+        <p>Personal collection<br>Selected frames<br>Ongoing archive</p>
+        <span class="aside-rule"></span>
+        <span class="aside-date">EST. 2026</span>
+      </div>
+    </section>
+
+    <section class="archive" id="archive">
+      <div class="archive-heading">
+        <div>
+          <p class="overline">THE COLLECTION</p>
+          <h2>Arsip foto <span id="totalCount">—</span></h2>
+        </div>
+        <p class="archive-note">Dikumpulkan satu per satu.</p>
+      </div>
+
+      <div class="archive-tools">
+        <label class="search-field">
+          <span aria-hidden="true">↳</span>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Cari nama foto..."
+            aria-label="Cari foto berdasarkan nama"
+          >
+        </label>
+
+        <label class="filter-field">
+          <span>LIHAT</span>
+          <select id="filterSelect" aria-label="Filter koleksi foto">
+            <option value="all">Semua foto</option>
+            <option value="favorites">Favorit saya</option>
+            <option value="group-1">Arsip 01–05</option>
+            <option value="group-2">Arsip 06–10</option>
+            <option value="group-3">Arsip 11–13</option>
+          </select>
+        </label>
+
+        <button id="slideshowBtn" class="text-button" type="button">
+          <span aria-hidden="true">↗</span> Mulai slideshow
+        </button>
+      </div>
+
+      <div class="results-line">
+        <p id="resultCount" aria-live="polite">Memuat arsip...</p>
+        <p>SELECT AN IMAGE TO EXPLORE</p>
+      </div>
+
+      <div class="gallery-grid" id="galleryGrid"></div>
+
+      <div class="empty-state" id="emptyState" hidden>
+        <p class="overline">NO MATCHES FOUND</p>
+        <h3>Belum ada foto di sini.</h3>
+        <p>Coba kata pencarian atau filter yang berbeda.</p>
+        <button class="text-button" id="resetFilterBtn" type="button">
+          Tampilkan semua foto ↗
+        </button>
+      </div>
+    </section>
+
+    <section class="about-section" id="about">
+      <span class="about-number">01 / ABOUT THIS SPACE</span>
+      <div>
+        <h2>Bukan tentang memiliki semuanya.<br><em>Hanya menyimpan yang berarti.</em></h2>
+        <p>
+          Koleksi ini adalah arsip pribadi yang terus bertambah.
+          Setiap gambar punya tempatnya sendiri, tanpa perlu
+          alasan untuk menjadikannya istimewa.
+        </p>
+      </div>
+      <span class="about-end">END OF NOTE.</span>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <a class="wordmark footer-wordmark" href="#">koleksi<span>foto</span><sup>®</sup></a>
+    <p>Personal visual journal · 2026</p>
+    <a href="#page-title">Kembali ke atas ↑</a>
+  </footer>
+
+  <div
+    class="lightbox"
+    id="lightbox"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Penampil foto"
+    aria-hidden="true"
+    inert
+  >
+    <header class="lightbox-header">
+      <a href="#" class="wordmark lightbox-brand" id="lightboxBrand">
+        koleksi<span>foto</span><sup>®</sup>
+      </a>
+
+      <span class="lightbox-counter" id="lightboxCounter">01 / 13</span>
+
+      <div class="lightbox-actions">
+        <a id="downloadBtn" class="lightbox-action" href="#" download>
+          ↓ <span>Unduh foto</span>
+        </a>
+        <button id="playPauseBtn" class="lightbox-action" type="button">
+          ▶ <span>Putar</span>
+        </button>
+        <button id="closeBtn" class="close-button" type="button" aria-label="Tutup foto">
+          ×
+        </button>
+      </div>
+    </header>
+
+    <button id="prevBtn" class="lightbox-nav prev" type="button" aria-label="Foto sebelumnya">←</button>
+
+    <figure class="lightbox-figure">
+      <img id="lightboxImage" src="" alt="">
+      <figcaption>
+        <span id="lightboxCaption">Foto</span>
+        <span id="lightboxFileName"></span>
+      </figcaption>
+    </figure>
+
+    <button id="nextBtn" class="lightbox-nav next" type="button" aria-label="Foto berikutnya">→</button>
+
+    <p class="lightbox-hint">← → UNTUK BERPINDAH &nbsp; / &nbsp; ESC UNTUK KELUAR</p>
+  </div>
 </body>
 </html>
