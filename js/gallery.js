@@ -17,6 +17,22 @@ const imageFiles = [
   "13.jpg"
 ];
 
+const photoTitles = [
+  "Sunrise in Prau",
+  "Sunset in Congkrang",
+  "Merbabu View",
+  "Congkrang part 2",
+  "Sumbing View",
+  "Alun-alun Magelang",
+  "Kesirat Beach",
+  "Ketep Pass",
+  "Prau part 2",
+  "Kesirat part 2",
+  "Andong View",
+  "Kesirat part 3",
+  "Andong part 2"
+];
+
 const gallery = document.getElementById("galleryGrid");
 const searchInput = document.getElementById("searchInput");
 const filterSelect = document.getElementById("filterSelect");
@@ -43,7 +59,7 @@ const FAVORITES_KEY = "koleksi-foto-favorites";
 const photos = imageFiles.map((file, index) => ({
   id: index,
   file,
-  title: `Foto ${index + 1}`,
+  title: photoTitles[index] || `Foto ${index + 1}`,
   group:
     index < 5 ? "group-1" :
     index < 10 ? "group-2" : "group-3",
@@ -57,6 +73,8 @@ let currentIndex = 0;
 let slideshowTimer = null;
 let slideshowPlaying = false;
 let previousFocus = null;
+let photoTransitionTimer = null;
+let photoTransitionId = 0;
 
 // Favorit disimpan di browser, bukan di server.
 function loadFavorites() {
@@ -294,7 +312,17 @@ function showPhoto(id) {
 
   const photo = photos[currentIndex];
 
-  lightboxImage.src = photo.src;
+  // Batalkan jadwal transisi sebelumnya jika foto diganti cepat.
+  if (photoTransitionTimer !== null) {
+    clearTimeout(photoTransitionTimer);
+  }
+
+  const transitionId = ++photoTransitionId;
+
+  // Mulai efek fade-out dan zoom-out.
+  lightboxImage.classList.add("is-transitioning");
+
+  // Perbarui informasi foto.
   lightboxImage.alt = photo.title;
   lightboxCaption.textContent = photo.title;
   lightboxFileName.textContent = photo.file;
@@ -308,10 +336,39 @@ function showPhoto(id) {
 
   prevBtn.disabled = photos.length < 2;
   nextBtn.disabled = photos.length < 2;
+
+  // Ganti gambar setelah foto lama mulai memudar.
+  photoTransitionTimer = setTimeout(() => {
+    if (transitionId !== photoTransitionId) return;
+
+    const revealPhoto = () => {
+      if (transitionId !== photoTransitionId) return;
+
+      lightboxImage.classList.remove("is-transitioning");
+    };
+
+    lightboxImage.onload = revealPhoto;
+    lightboxImage.onerror = revealPhoto;
+    lightboxImage.src = photo.src;
+
+    // Tangani gambar yang sudah tersimpan di cache browser.
+    if (lightboxImage.complete) {
+      requestAnimationFrame(revealPhoto);
+    }
+  }, 220);
 }
 
 function closeLightbox() {
   stopSlideshow();
+  if (photoTransitionTimer !== null) {
+  clearTimeout(photoTransitionTimer);
+  photoTransitionTimer = null;
+}
+
+photoTransitionId++;
+lightboxImage.classList.remove("is-transitioning");
+lightboxImage.onload = null;
+lightboxImage.onerror = null;
 
   lightbox.classList.remove("is-open");
   lightbox.setAttribute("aria-hidden", "true");
@@ -468,3 +525,4 @@ if ("ResizeObserver" in window) {
 
 buildGallery();
 updateSlideshowControls();
+
