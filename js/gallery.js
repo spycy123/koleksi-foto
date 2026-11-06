@@ -209,7 +209,8 @@ function updateMasonry(card) {
     getComputedStyle(gallery).rowGap
   ) || 0;
 
-  const height = card.getBoundingClientRect().height;
+  // Gunakan offsetHeight agar kalkulasi tinggi layout tidak terpengaruh oleh transformasi paralaks visual.
+  const height = card.offsetHeight || card.getBoundingClientRect().height;
 
   if (height <= 0) return;
 
@@ -523,6 +524,102 @@ if ("ResizeObserver" in window) {
   window.addEventListener("load", observeCards, { once: true });
 }
 
+// === EFEK PARALAKS KETIKA SCROLL ===
+
+const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+let reducedMotion = motionQuery.matches;
+
+motionQuery.addEventListener("change", e => {
+  reducedMotion = e.matches;
+  if (reducedMotion) resetParallax();
+});
+
+const introCopy = document.querySelector(".intro-copy");
+const introAside = document.querySelector(".intro-aside");
+const aboutSection = document.querySelector(".about-section");
+const aboutNumber = document.querySelector(".about-number");
+const aboutText = document.querySelector(".about-section > div");
+
+let targetScrollY = window.scrollY || window.pageYOffset || 0;
+let currentScrollY = targetScrollY;
+
+window.addEventListener("scroll", () => {
+  targetScrollY = window.scrollY || window.pageYOffset || 0;
+}, { passive: true });
+
+function resetParallax() {
+  if (introCopy) introCopy.style.removeProperty("--intro-copy-y");
+  if (introAside) introAside.style.removeProperty("--intro-aside-y");
+  if (aboutNumber) aboutNumber.style.removeProperty("--about-num-y");
+  if (aboutText) aboutText.style.removeProperty("--about-text-y");
+
+  photos.forEach(photo => {
+    if (photo.card) {
+      photo.card.style.removeProperty("--card-parallax-y");
+      photo.card.style.removeProperty("--img-parallax-y");
+    }
+  });
+}
+
+function updateParallax() {
+  if (!reducedMotion && !lightbox.classList.contains("is-open")) {
+    // Lerp untuk pergerakan halus (fluid momentum) saat scroll
+    currentScrollY += (targetScrollY - currentScrollY) * 0.12;
+    const windowHeight = window.innerHeight;
+
+    // 1. Paralaks hero / intro saat scroll
+    if (currentScrollY < windowHeight) {
+      if (introCopy) {
+        introCopy.style.setProperty("--intro-copy-y", `${(currentScrollY * 0.14).toFixed(1)}px`);
+      }
+      if (introAside) {
+        introAside.style.setProperty("--intro-aside-y", `${(currentScrollY * 0.06).toFixed(1)}px`);
+      }
+    }
+
+    // 2. Paralaks kartu & bukaan foto saat scroll
+    const isMobile = window.innerWidth <= 900;
+
+    photos.forEach(photo => {
+      const card = photo.card;
+      if (!card || card.hidden) return;
+
+      const rect = card.getBoundingClientRect();
+      if (rect.bottom >= -60 && rect.top <= windowHeight + 60) {
+        const cardCenter = rect.top + rect.height / 2;
+        const screenCenter = windowHeight / 2;
+        const progress = (cardCenter - screenCenter) / screenCenter;
+
+        // A. Pergeseran gambar dalam bingkai foto (inner photo parallax)
+        const imgShift = Math.max(-24, Math.min(24, progress * -20));
+        card.style.setProperty("--img-parallax-y", `${imgShift.toFixed(1)}px`);
+
+        // B. Pergeseran ritme kolom (column flow stagger)
+        const colFactor = isMobile ? ((photo.id % 2) ? 1 : -1) * 8 : (photo.id % 3 - 1) * 12;
+        const cardShift = progress * colFactor;
+        card.style.setProperty("--card-parallax-y", `${cardShift.toFixed(1)}px`);
+      }
+    });
+
+    // 3. Paralaks bagian Tentang saat scroll
+    if (aboutSection) {
+      const aboutRect = aboutSection.getBoundingClientRect();
+      if (aboutRect.bottom > 0 && aboutRect.top < windowHeight) {
+        const aboutProgress = (aboutRect.top - windowHeight / 2) / (windowHeight / 2);
+        if (aboutNumber) {
+          aboutNumber.style.setProperty("--about-num-y", `${(aboutProgress * 15).toFixed(1)}px`);
+        }
+        if (aboutText) {
+          aboutText.style.setProperty("--about-text-y", `${(aboutProgress * 8).toFixed(1)}px`);
+        }
+      }
+    }
+  }
+
+  requestAnimationFrame(updateParallax);
+}
+
 buildGallery();
 updateSlideshowControls();
+requestAnimationFrame(updateParallax);
 

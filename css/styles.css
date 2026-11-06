@@ -177,9 +177,16 @@ main {
   line-height: 1.9;
 }
 
+.intro-copy {
+  transform: translateY(var(--intro-copy-y, 0px));
+  will-change: transform;
+}
+
 .intro-aside {
   padding: 0 0 6px 18px;
   border-left: 1px solid var(--line);
+  transform: translateY(var(--intro-aside-y, 0px));
+  will-change: transform;
 }
 
 .aside-index,
@@ -365,6 +372,8 @@ main {
 .photo-card {
   min-width: 0;
   grid-row-end: span var(--row-span, 35);
+  transform: translateY(var(--card-parallax-y, 0px));
+  will-change: transform;
 }
 
 .photo-media {
@@ -380,6 +389,14 @@ main {
   min-height: 100px;
   object-fit: cover;
   cursor: zoom-in;
+  transform: scale(1.14) translateY(var(--img-parallax-y, 0px));
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.photo-image.is-loading,
+.photo-image.is-broken {
+  transform: none;
 }
 
 .photo-image.is-loading {
@@ -493,6 +510,13 @@ main {
 .about-number {
   padding-top: 8px;
   color: var(--muted);
+  transform: translateY(var(--about-num-y, 0px));
+  will-change: transform;
+}
+
+.about-section > div {
+  transform: translateY(var(--about-text-y, 0px));
+  will-change: transform;
 }
 
 .about-section h2 {
@@ -947,6 +971,15 @@ main {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .photo-card,
+  .photo-image,
+  .intro-copy,
+  .intro-aside,
+  .about-number,
+  .about-section > div {
+    transform: none !important;
   }
 }
 
